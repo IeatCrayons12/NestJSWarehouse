@@ -9,14 +9,11 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column()
+  password: string;
+
   @Column({ nullable: true })
   name: string;
-
-  @Column({ nullable: true })
-  picture: string;
-
-  @Column({ nullable: true })
-  googleId: string;
 
   @OneToMany(() => Item, (item) => item.createdBy)
   items: Item[];

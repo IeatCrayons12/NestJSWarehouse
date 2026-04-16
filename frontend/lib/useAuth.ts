@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { authApi } from './api';
 
 export function useAuth() {
-  const [user, setUser] = useState<Record<string, any> | null>(null);
+  const [user, setUser] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchMe = useCallback(async () => {

@@ -1,13 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../users/user.entity';
+import { UsersService } from '../users/users.service';
+import { RegisterDto, LoginDto } from './auth.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  login(user: User): { access_token: string } {
-    const payload = { sub: user.id, email: user.email };
-    return { access_token: this.jwtService.sign(payload) };
+  async register(dto: RegisterDto) {
+    const user = await this.usersService.create(dto.email, dto.password, dto.name);
+    const token = this.jwtService.sign({ sub: user.id, email: user.email });
+    return { access_token: token, user: { id: user.id, email: user.email, name: user.name } };
+  }
+
+  async login(dto: LoginDto) {
+    const user = await this.usersService.findByEmail(dto.email);
+    if (!user) throw new UnauthorizedException('Invalid email or password');
+    const valid = await this.usersService.validatePassword(user, dto.password);
+    if (!valid) throw new UnauthorizedException('Invalid email or password');
+    const token = this.jwtService.sign({ sub: user.id, email: user.email });
+    return { access_token: token, user: { id: user.id, email: user.email, name: user.name } };
   }
 }

@@ -16,7 +16,9 @@ export default function ItemForm({ item, onSubmit, onClose }: Props) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    setForm(item ? { name: item.name, description: item.description || '', sku: item.sku || '', category: item.category || '', quantity: item.quantity, price: item.price, location: item.location || '' } : empty);
+    setForm(item
+      ? { name: item.name, description: item.description || '', sku: item.sku || '', category: item.category || '', quantity: item.quantity, price: item.price, location: item.location || '' }
+      : empty);
   }, [item]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -33,39 +35,73 @@ export default function ItemForm({ item, onSubmit, onClose }: Props) {
     finally { setSaving(false); }
   };
 
-  const field = (label: string, name: keyof ItemFormData, opts?: { type?: string; placeholder?: string; colSpan?: boolean }) => (
-    <div className={opts?.colSpan ? 'col-span-2' : ''}>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-      <input name={name} type={opts?.type || 'text'} value={form[name] as string ?? ''} onChange={handleChange}
-        placeholder={opts?.placeholder}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-    </div>
-  );
+  const inputClass = "w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-all";
+  const inputStyle = { background: 'var(--cream)', border: '1.5px solid var(--border)', color: 'var(--text)' };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg">
-        <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h2 className="font-semibold text-gray-800">{item ? 'Edit Item' : 'New Item'}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 cursor-pointer">✕</button>
-        </div>
-        <form onSubmit={handleSubmit} className="p-6 grid grid-cols-2 gap-4">
-          {field('Name *', 'name', { colSpan: true })}
-          {field('SKU', 'sku')}
-          {field('Category', 'category')}
-          {field('Quantity', 'quantity', { type: 'number' })}
-          {field('Price (฿)', 'price', { type: 'number' })}
-          {field('Location', 'location', { placeholder: 'e.g. Shelf A-3', colSpan: true })}
-          <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows={3}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+    <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ background: 'rgba(45,24,16,0.4)', backdropFilter: 'blur(4px)' }}>
+      <div className="w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden" style={{ background: 'var(--white)', border: '1.5px solid var(--border)' }}>
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5" style={{ background: 'var(--orange-light)', borderBottom: '1.5px solid var(--border)' }}>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #FF7A35, #FFB380)' }}>
+              <span className="text-white text-sm">{item ? '✏️' : '+'}</span>
+            </div>
+            <h2 className="font-bold" style={{ fontFamily: 'Sora, sans-serif', color: 'var(--text)' }}>
+              {item ? 'Edit Item' : 'New Item'}
+            </h2>
           </div>
-          {error && <p className="col-span-2 text-red-500 text-sm">{error}</p>}
+          <button onClick={onClose} className="w-8 h-8 rounded-xl flex items-center justify-center transition hover:scale-110 cursor-pointer"
+            style={{ background: 'var(--white)', color: 'var(--text-soft)' }}>✕</button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 grid grid-cols-2 gap-4">
+          <div className="col-span-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-soft)' }}>Name *</label>
+            <input name="name" value={form.name} onChange={handleChange} className={inputClass} style={inputStyle} />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-soft)' }}>SKU</label>
+            <input name="sku" value={form.sku} onChange={handleChange} className={inputClass} style={inputStyle} />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-soft)' }}>Category</label>
+            <input name="category" value={form.category} onChange={handleChange} className={inputClass} style={inputStyle} />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-soft)' }}>Quantity</label>
+            <input name="quantity" type="number" min="0" value={form.quantity} onChange={handleChange} className={inputClass} style={inputStyle} />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-soft)' }}>Price (฿)</label>
+            <input name="price" type="number" min="0" step="0.01" value={form.price ?? ''} onChange={handleChange} className={inputClass} style={inputStyle} />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-soft)' }}>Location</label>
+            <input name="location" value={form.location} onChange={handleChange} placeholder="e.g. Shelf A-3" className={inputClass} style={inputStyle} />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-soft)' }}>Description</label>
+            <textarea name="description" value={form.description} onChange={handleChange} rows={3}
+              className={`${inputClass} resize-none`} style={inputStyle} />
+          </div>
+
+          {error && (
+            <div className="col-span-2 px-4 py-3 rounded-xl text-sm font-medium" style={{ background: '#FFF0F0', color: '#CC3333', border: '1px solid #FFD0D0' }}>
+              {error}
+            </div>
+          )}
+
           <div className="col-span-2 flex justify-end gap-3 pt-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition cursor-pointer">Cancel</button>
-            <button type="submit" disabled={saving} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 cursor-pointer">
-              {saving ? 'Saving…' : item ? 'Update' : 'Create'}
+            <button type="button" onClick={onClose}
+              className="px-5 py-2.5 rounded-xl text-sm font-medium transition hover:scale-105 cursor-pointer"
+              style={{ background: 'var(--cream)', border: '1.5px solid var(--border)', color: 'var(--text-soft)' }}>
+              Cancel
+            </button>
+            <button type="submit" disabled={saving}
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold transition hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
+              style={{ background: 'linear-gradient(135deg, #FF7A35, #FFB380)', color: 'white', boxShadow: '0 4px 12px rgba(255,122,53,0.3)' }}>
+              {saving ? 'Saving…' : item ? 'Update Item' : 'Create Item'}
             </button>
           </div>
         </form>

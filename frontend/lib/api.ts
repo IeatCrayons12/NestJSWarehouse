@@ -24,8 +24,11 @@ api.interceptors.response.use(
 );
 
 export const authApi = {
+  register: (email: string, password: string, name?: string) =>
+    api.post('/auth/register', { email, password, name }),
+  login: (email: string, password: string) =>
+    api.post('/auth/login', { email, password }),
   me: () => api.get('/auth/me'),
-  googleLoginUrl: () => `${API_URL}/auth/google`,
 };
 
 export const itemsApi = {
