@@ -23,7 +23,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
         </div>
         <div className="flex items-center gap-4">
           {user.picture && <img src={user.picture as string} alt={user.name as string} className="w-8 h-8 rounded-full" />}
-          <span className="text-sm text-gray-600">{user.name as string || user.email as string}</span>
+          <span className="text-sm text-gray-600">{String(user.name || user.email || '')}</span>
           <button onClick={logout} className="text-sm text-gray-500 hover:text-red-500 transition cursor-pointer">
             Logout
           </button>
