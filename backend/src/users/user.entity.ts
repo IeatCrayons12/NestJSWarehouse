@@ -10,10 +10,16 @@ export class User {
   email: string;
 
   @Column({ nullable: true })
-  password: string;
+  name: string;
 
   @Column({ nullable: true })
-  name: string;
+  picture: string;
+
+  @Column({ nullable: true })
+  googleId: string;
+
+  @Column({ nullable: true })
+  password: string;
 
   @OneToMany(() => Item, (item) => item.createdBy)
   items: Item[];
